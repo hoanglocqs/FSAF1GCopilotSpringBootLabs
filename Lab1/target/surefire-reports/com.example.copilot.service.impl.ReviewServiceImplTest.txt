@@ -1,0 +1,125 @@
+-------------------------------------------------------------------------------
+Test set: com.example.copilot.service.impl.ReviewServiceImplTest
+-------------------------------------------------------------------------------
+Tests run: 13, Failures: 6, Errors: 2, Skipped: 0, Time elapsed: 0.416 s <<< FAILURE! -- in com.example.copilot.service.impl.ReviewServiceImplTest
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenProductNotFound_ShouldThrowResourceNotFoundException -- Time elapsed: 0.280 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.example.copilot.exception.ResourceNotFoundException> but was: <java.lang.NullPointerException>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenProductNotFound_ShouldThrowResourceNotFoundException(ReviewServiceImplTest.java:150)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+Caused by: java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.lambda$addReview_WhenProductNotFound_ShouldThrowResourceNotFoundException$3(ReviewServiceImplTest.java:152)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_VerifyExactOrderOfOperations_TDD -- Time elapsed: 0.014 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_VerifyExactOrderOfOperations_TDD(ReviewServiceImplTest.java:231)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenUserNotFound_ShouldThrowResourceNotFoundException -- Time elapsed: 0.007 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.example.copilot.exception.ResourceNotFoundException> but was: <java.lang.NullPointerException>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenUserNotFound_ShouldThrowResourceNotFoundException(ReviewServiceImplTest.java:132)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+Caused by: java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.lambda$addReview_WhenUserNotFound_ShouldThrowResourceNotFoundException$2(ReviewServiceImplTest.java:134)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenUserHasAlreadyReviewedProduct_ShouldThrowDuplicateReviewException -- Time elapsed: 0.004 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.example.copilot.exception.DuplicateReviewException> but was: <java.lang.NullPointerException>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenUserHasAlreadyReviewedProduct_ShouldThrowDuplicateReviewException(ReviewServiceImplTest.java:111)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+Caused by: java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.lambda$addReview_WhenUserHasAlreadyReviewedProduct_ShouldThrowDuplicateReviewException$1(ReviewServiceImplTest.java:113)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenUserHasNotPurchasedProduct_ShouldThrowUserNotPurchasedProductException -- Time elapsed: 0.006 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.example.copilot.exception.UserNotPurchasedProductException> but was: <java.lang.NullPointerException>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenUserHasNotPurchasedProduct_ShouldThrowUserNotPurchasedProductException(ReviewServiceImplTest.java:91)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+Caused by: java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.lambda$addReview_WhenUserHasNotPurchasedProduct_ShouldThrowUserNotPurchasedProductException$0(ReviewServiceImplTest.java:93)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+
+com.example.copilot.service.impl.ReviewServiceImplTest.deleteReview_WhenAuthorized_ShouldDeleteSuccessfully -- Time elapsed: 0.028 s <<< FAILURE!
+Wanted but not invoked:
+reviewRepository.calculateAverageRating(1L);
+-> at com.example.copilot.service.impl.ReviewServiceImplTest.deleteReview_WhenAuthorized_ShouldDeleteSuccessfully(ReviewServiceImplTest.java:352)
+
+However, there were exactly 3 interactions with this mock:
+reviewRepository.findById(1L);
+-> at com.example.copilot.service.impl.ReviewServiceImpl.deleteReview(ReviewServiceImpl.java:144)
+
+reviewRepository.delete(
+    com.example.copilot.core.entity.Review@5b251fb9
+);
+-> at com.example.copilot.service.impl.ReviewServiceImpl.deleteReview(ReviewServiceImpl.java:153)
+
+reviewRepository.getAverageRatingByProductId(
+    1L
+);
+-> at com.example.copilot.service.impl.ReviewServiceImpl.updateProductAverageRating(ReviewServiceImpl.java:133)
+
+
+	at com.example.copilot.service.impl.ReviewServiceImplTest.deleteReview_WhenAuthorized_ShouldDeleteSuccessfully(ReviewServiceImplTest.java:352)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenAllValidationsPass_ShouldSaveReviewSuccessfully -- Time elapsed: 0.009 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenAllValidationsPass_ShouldSaveReviewSuccessfully(ReviewServiceImplTest.java:172)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenOrderStatusIsPending_ShouldThrowUserNotPurchasedProductException -- Time elapsed: 0.006 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <com.example.copilot.exception.UserNotPurchasedProductException> but was: <java.lang.NullPointerException>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.addReview_WhenOrderStatusIsPending_ShouldThrowUserNotPurchasedProductException(ReviewServiceImplTest.java:202)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+Caused by: java.lang.NullPointerException: Cannot invoke "com.example.copilot.service.OrderVerificationService.hasUserPurchasedProduct(java.lang.Long, java.lang.Long)" because "this.orderVerificationService" is null
+	at com.example.copilot.service.impl.ReviewServiceImpl.addReview(ReviewServiceImpl.java:59)
+	at com.example.copilot.service.impl.ReviewServiceImplTest.lambda$addReview_WhenOrderStatusIsPending_ShouldThrowUserNotPurchasedProductException$4(ReviewServiceImplTest.java:204)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	... 6 more
+

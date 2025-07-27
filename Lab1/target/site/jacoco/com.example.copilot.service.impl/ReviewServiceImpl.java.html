@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReviewServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">lab3-springboot</a> &gt; <a href="index.source.html" class="el_package">com.example.copilot.service.impl</a> &gt; <span class="el_source">ReviewServiceImpl.java</span></div><h1>ReviewServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.copilot.service.impl;
+
+import com.example.copilot.core.constants.ApplicationConstants;
+import com.example.copilot.core.dto.ReviewDTO;
+import com.example.copilot.core.entity.Product;
+import com.example.copilot.core.entity.Review;
+import com.example.copilot.core.entity.User;
+import com.example.copilot.core.enums.OrderStatus;
+import com.example.copilot.core.repository.OrderRepository;
+import com.example.copilot.core.repository.ProductRepository;
+import com.example.copilot.core.repository.UserRepository;
+import com.example.copilot.exception.DuplicateReviewException;
+import com.example.copilot.exception.ResourceNotFoundException;
+import com.example.copilot.exception.UserNotPurchasedProductException;
+import com.example.copilot.repository.ReviewRepository;
+import com.example.copilot.service.OrderVerificationService;
+import com.example.copilot.service.ReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+<span class="fc" id="L27">public class ReviewServiceImpl implements ReviewService {</span>
+    
+    @Autowired
+    private ReviewRepository reviewRepository;
+    
+    @Autowired
+    private OrderRepository orderRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ProductRepository productRepository;
+    
+    @Autowired
+    private OrderVerificationService orderVerificationService;
+    
+    /**
+     * Implementation following TDD approach with optimized logic
+     * 1. First, call the orderRepository to verify that the user (userId) has at least one 
+     *    completed ('DELIVERED') order containing the product (productId). 
+     *    If not, throw a new 'UserNotPurchasedProductException'.
+     * 2. Then, call the reviewRepository to check if a review from this user for this product 
+     *    already exists. If yes, throw a 'DuplicateReviewException'.
+     * 3. If all checks pass, map the DTO to a new Review entity and save it.
+     */
+    @Override
+    public ReviewDTO addReview(ReviewDTO reviewDTO) {
+<span class="fc" id="L55">        Long userId = reviewDTO.getUserId();</span>
+<span class="fc" id="L56">        Long productId = reviewDTO.getProductId();</span>
+        
+        // 1. Verify user has purchased the product with DELIVERED status
+<span class="nc" id="L59">        boolean hasPurchased = orderVerificationService.hasUserPurchasedProduct(userId, productId);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (!hasPurchased) {</span>
+<span class="nc" id="L61">            throw new UserNotPurchasedProductException(</span>
+                ApplicationConstants.ErrorMessages.USER_NOT_PURCHASED);
+        }
+        
+        // 2. Check if user has already reviewed this product
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (reviewRepository.existsByUserIdAndProductId(userId, productId)) {</span>
+<span class="nc" id="L67">            throw new DuplicateReviewException(</span>
+                ApplicationConstants.ErrorMessages.DUPLICATE_REVIEW);
+        }
+        
+        // 3. Fetch user and product entities
+<span class="nc" id="L72">        User user = userRepository.findById(userId)</span>
+<span class="nc" id="L73">            .orElseThrow(() -&gt; new ResourceNotFoundException(</span>
+                ApplicationConstants.ErrorMessages.USER_NOT_FOUND + userId));
+        
+<span class="nc" id="L76">        Product product = productRepository.findById(productId)</span>
+<span class="nc" id="L77">            .orElseThrow(() -&gt; new ResourceNotFoundException(</span>
+                ApplicationConstants.ErrorMessages.PRODUCT_NOT_FOUND + productId));
+        
+        // 4. Map DTO to entity and save
+<span class="nc" id="L81">        Review review = mapDtoToEntity(reviewDTO);</span>
+<span class="nc" id="L82">        review.setUser(user);</span>
+<span class="nc" id="L83">        review.setProduct(product);</span>
+        
+<span class="nc" id="L85">        Review savedReview = reviewRepository.save(review);</span>
+        
+        // 5. Optimized Prompt: Update product average rating using efficient helper method
+<span class="nc" id="L88">        this.updateProductAverageRating(productId);</span>
+        
+<span class="nc" id="L90">        return mapEntityToDto(savedReview);</span>
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;ReviewDTO&gt; getProductReviews(Long productId) {
+<span class="fc" id="L96">        List&lt;Review&gt; reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);</span>
+<span class="fc" id="L97">        return reviews.stream()</span>
+<span class="fc" id="L98">                .map(this::mapEntityToDto)</span>
+<span class="fc" id="L99">                .collect(Collectors.toList());</span>
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;ReviewDTO&gt; getUserReviews(Long userId) {
+<span class="nc" id="L105">        List&lt;Review&gt; reviews = reviewRepository.findByUserIdOrderByCreatedAtDesc(userId);</span>
+<span class="nc" id="L106">        return reviews.stream()</span>
+<span class="nc" id="L107">                .map(this::mapEntityToDto)</span>
+<span class="nc" id="L108">                .collect(Collectors.toList());</span>
+    }
+    
+    @Override
+    public void updateProductRating(Long productId) {
+<span class="nc" id="L113">        Product product = productRepository.findById(productId)</span>
+<span class="nc" id="L114">            .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Product not found with id: &quot; + productId));</span>
+        
+<span class="nc" id="L116">        Double averageRating = reviewRepository.calculateAverageRating(productId);</span>
+<span class="nc" id="L117">        Integer reviewCount = reviewRepository.countReviewsByProductId(productId);</span>
+        
+        // Update product with new ratings
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        product.setAverageRating(averageRating != null ? averageRating : 0.0);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        product.setReviewCount(reviewCount != null ? reviewCount : 0);</span>
+        
+<span class="nc" id="L123">        productRepository.save(product);</span>
+<span class="nc" id="L124">    }</span>
+    
+    /**
+     * Optimized Prompt: Private helper method for updating product average rating
+     * This helper method accepts a productId and uses efficient JPQL query
+     * to calculate average rating directly in the database for better performance
+     */
+    private void updateProductAverageRating(Long productId) {
+        // Use efficient JPQL query with Optional wrapper for null safety
+<span class="fc" id="L133">        Double averageRating = reviewRepository.getAverageRatingByProductId(productId).orElse(0.0);</span>
+        
+<span class="fc" id="L135">        Product product = productRepository.findById(productId)</span>
+<span class="pc" id="L136">            .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Product not found with id: &quot; + productId));</span>
+        
+<span class="fc" id="L138">        product.setAverageRating(averageRating);</span>
+<span class="fc" id="L139">        productRepository.save(product);</span>
+<span class="fc" id="L140">    }</span>
+    
+    @Override
+    public void deleteReview(Long reviewId, Long userId) {
+<span class="fc" id="L144">        Review review = reviewRepository.findById(reviewId)</span>
+<span class="fc" id="L145">            .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Review not found with id: &quot; + reviewId));</span>
+        
+        // Check if the review belongs to the user
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (!review.getUser().getId().equals(userId)) {</span>
+<span class="fc" id="L149">            throw new IllegalArgumentException(&quot;User can only delete their own reviews&quot;);</span>
+        }
+        
+<span class="fc" id="L152">        Long productId = review.getProduct().getId();</span>
+<span class="fc" id="L153">        reviewRepository.delete(review);</span>
+        
+        // Update product rating after deletion using optimized helper method
+<span class="fc" id="L156">        this.updateProductAverageRating(productId);</span>
+<span class="fc" id="L157">    }</span>
+    
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasUserPurchasedProduct(Long userId, Long productId) {
+<span class="fc" id="L162">        return orderRepository.existsByUserIdAndOrderItemsProductIdAndStatus(</span>
+            userId, productId, OrderStatus.DELIVERED);
+    }
+    
+    /**
+     * Helper method to map DTO to Entity
+     */
+    private Review mapDtoToEntity(ReviewDTO dto) {
+<span class="nc" id="L170">        Review review = new Review();</span>
+<span class="nc" id="L171">        review.setRating(dto.getRating());</span>
+<span class="nc" id="L172">        review.setComment(dto.getComment());</span>
+<span class="nc" id="L173">        return review;</span>
+    }
+    
+    /**
+     * Helper method to map Entity to DTO
+     */
+    private ReviewDTO mapEntityToDto(Review review) {
+<span class="fc" id="L180">        ReviewDTO dto = new ReviewDTO();</span>
+<span class="fc" id="L181">        dto.setId(review.getId());</span>
+<span class="fc" id="L182">        dto.setUserId(review.getUser().getId());</span>
+<span class="fc" id="L183">        dto.setUserFullName(review.getUser().getName()); // User entity has 'name' field</span>
+<span class="fc" id="L184">        dto.setProductId(review.getProduct().getId());</span>
+<span class="fc" id="L185">        dto.setProductName(review.getProduct().getName());</span>
+<span class="fc" id="L186">        dto.setRating(review.getRating());</span>
+<span class="fc" id="L187">        dto.setComment(review.getComment());</span>
+<span class="fc" id="L188">        dto.setCreatedAt(review.getCreatedAt());</span>
+<span class="fc" id="L189">        dto.setUpdatedAt(review.getUpdatedAt());</span>
+<span class="fc" id="L190">        return dto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
